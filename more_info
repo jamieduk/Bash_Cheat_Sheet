@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+#
+#
+NOW=`date '+%F_%H:%M:%S'`;
+lastfile="records/lastsearch.txt"
+echo "J~Net Bash Database (c)J~Net 2021 The Time & Date Is $NOW"
+echo ""
+echo "First The Last Record Search Will Be Displayed"
+
+[[ -f $lastfile ]] && lastsearch=`head -c 38 $lastfile` # cat $lastfile
+if [ -z "$lastsearch" ]
+then
+    echo "Search First & Try Again."
+    echo "Or Enter Path If Known"
+    read input
+else
+    echo "Ok Last Record Search Found"
+    cat $lastsearch
+    input=$lastsearch
+fi
+echo ""
+
+echo ""
+echo "Listing Record Requested, Please Wait..."
+echo ""
+echo ""
+if [ -z "$input" ]
+then
+    echo "Use search_records Option To Find Records."
+    #break
+else
+    cat "$input"
+    echo "Last Modyfied Date Of Record $input : "
+    stat -c %y "$input"
+    echo ""
+fi
+#
+echo "Enter Path Of Record To Know More About (If Required)"
+read input
+if [ -z "$input" ]
+then
+    echo "Use search_records Option To Find Records."
+    #break
+else
+    cat $input
+    echo "Last Modyfied Date Of Record $input : "
+    stat -c %y "$input"
+    echo ""
+fi
+
+
+bash menu
+# https://stackoverflow.com/questions/16391208/print-a-files-last-modified-date-in-bash/16391221
+# https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty/
+# 

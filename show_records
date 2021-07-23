@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+pwd= `pwd` # $pwd/
+numfiles=$(find records/*.txt | wc -l)
+#record_count=`cat records/count.txt`
+NOW=`date '+%F_%H:%M:%S'`;
+echo "J~Net Bash Database (c)J~Net 2021 The Time & Date Is $NOW"
+echo ""
+echo "Total Records $record_count"
+echo ""
+while true
+do
+    echo "Enter Search Or Nothing To Go back To Menu"
+    read input
+    if [ -z "$input" ]
+    then
+        exit
+    else
+        echo "$input" > strings.txt
+        time grep -HFf strings.txt records/* > records/output.txt
+        echo "Search Complete"
+        echo ""
+        cat records/output.txt
+        rm strings.txt
+        rm records/output.txt
+        echo ""
+fi
+
+done
+# https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty/

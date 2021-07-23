@@ -1,0 +1,41 @@
+#!/bin/bash
+NOW=`date '+%F_%H:%M:%S'`;
+echo "J~Net Bash Database (c)J~Net 2021 The Time & Date Is $NOW"
+echo ""
+echo "Update Record"
+echo ""
+echo "Enter Your Name / Number"
+read agent
+echo "Enter Record Filename"
+read input
+# Check User input
+if [ -z "$input" ]
+then
+    echo "Use search_records Option To Find Records."
+    #break
+else
+    echo "Enter Update Details"
+    read update
+    #cat $input > temp.txt
+    echo "Agent $agent Logged In AS $USER Updated Record $input @ $NOW" > temp.txt
+    echo $update >> temp.txt
+    cat temp.txt
+    while true; do
+echo "Happy With This Update Correct? Y or N"
+read yn
+    case $yn in
+        [Yy]* ) cat temp.txt >> $input
+break;;
+        [Nn]* ) exit;;
+        * ) echo "Please Try Again.";;
+    esac
+done
+
+fi
+echo "Record Updated!"
+cat $input
+echo "Press Enter To Continue"
+read Y
+rm temp.txt
+clear
+bash menu

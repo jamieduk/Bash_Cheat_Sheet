@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+NOW=`date '+%F_%H:%M:%S'`;
+echo "J~Net Bash Database (c)J~Net 2021 The Time & Date Is $NOW"
+echo -e "\e[93mCreate New Record"
+echo ""
+#
+echo "Enter title (record file name)"
+read fname
+echo "Logged In AS $USER Created A New Record @ $NOW" > temp.txt
+echo -e "\e[93mEnter  : "
+
+echo ""
+cat temp.txt
+#
+while true; do
+echo "Happy This is correct? Y or N"
+read yn
+    case $yn in
+        [Yy]* ) echo "Cool"
+#oldnum=`cut -d ',' -f2 records/count.txt`
+#newnum=`expr $oldnum + 1`
+#sed -i "s/$oldnum\$/$newnum/g" records/count.txt
+#
+#count=`cat records/count.txt`
+count=$(find records/*.txt | wc -l)
+echo "Record Number $count"
+#echo "Record / Reference Number $count " >> temp.txt
+NOW=`date '+%F_%H:%M:%S'`;
+echo "Record Stored @ $NOW" >> temp.txt
+#sudo
+cat temp.txt> records/$fname.txt
+gedit records/$fname.txt
+rm temp.txt
+break;;
+        [Nn]* ) exit;;
+        * ) echo "Please Try Again.";;
+    esac
+done
+# Add To Records and get Crime Reference Number
+bash menu

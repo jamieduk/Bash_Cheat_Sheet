@@ -1,0 +1,23 @@
+Linux Cheat Sheet App Creator
+
+
+Search file bash code string related to your needs and results can help you write faster code!
+
+
+2 Add! :
+
+https://www.shell-tips.com/bash/math-arithmetic-calculation
+
+https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+#!/bin/bash
+# (c) J~Net 2021
+#
+# ./menu
+#
+#
+#
+echo -e "\e[93mJ~Net Bash Database Menu (c)J~Net 2021"
+echo ""
+path="." # .
+select fname in $path/*; #
+do
+    echo you picked $fname \($REPLY\)
+    ./$fname
+    bash menu
+    break;
+done
+bash menu

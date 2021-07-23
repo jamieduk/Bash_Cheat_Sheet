@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+NOW=`date '+%F_%H:%M:%S'`;
+echo "J~Net Bash Database (c)J~Net 2021 The Time & Date Is $NOW"
+echo ""
+echo -e "\e[93mType Record Number To Open"
+read input
+echo "Record / Reference Number $input" > lastsearch.txt
+echo ""
+grep -HFf lastsearch.txt records/* > records/lastsearch.txt
+echo "Path To File Will Now Be Displayed For Good Results Matching $input"
+echo "This path is used with more_info Menu Option."
+echo ""
+cat records/lastsearch.txt
+rm lastsearch.txt
+rm records/lastsearch.txt
+#rm records/lastsearch.txt
+echo ""
+echo "Search Complete!"
+echo ""
+echo "Press Enter To Continue"
+read Y
+bash menu

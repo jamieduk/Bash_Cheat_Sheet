@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+NOW=`date '+%F_%H:%M:%S'`;
+echo "J~Net Bash Database (c)J~Net 2021 The Time & Date Is $NOW"
+echo ""
+echo -e "\e[93mType Search Term To Find In Records"
+read input
+echo "$input" > lastsearch.txt
+echo ""
+time grep -HFf lastsearch.txt records/* > records/output.txt
+echo "Path To File Will Now Be Displayed For Good Results Matching $input"
+echo "This path is used with more_info Menu Option."
+echo "" && cat records/output.txt
+#cat records/output.txt
+rm lastsearch.txt
+rm records/output.txt
+#rm records/lastsearch.txt
+echo ""
+echo "Search Complete!"
+echo ""
+echo "Press Enter To Continue"
+read Y
+bash menu
