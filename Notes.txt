@@ -25,12 +25,9 @@ The Website Is
 jnet.sytes.net
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To Do In Future!
+More To Come In The Future!
 
-https://www.shell-tips.com/bash/math-arithmetic-calculation
-
-https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty
-
+Use the compression menu to work with archives for the records folder!
 
 
 
