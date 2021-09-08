@@ -1,10 +1,31 @@
-Linux Cheat Sheet App Creator
+Linux Cheat Sheet App Creator By (c)J~Net 2021
 
 
 Search file bash code string related to your needs and results can help you write faster code!
 
 
-2 Add! :
+git clone https://github.com/jamieduk/Bash_Cheat_Sheet.git
+
+cd into it and make executable
+
+cd Bash_Cheat_Sheet
+
+sudo chmod +x *.*
+
+Run With the following
+
+./menu
+
+Any issues forum link is
+
+https://jnet.forumotion.com/t1756-bash-cheat-sheet-app#2718
+
+
+The Website Is
+jnet.sytes.net
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To Do In Future!
 
 https://www.shell-tips.com/bash/math-arithmetic-calculation
 
