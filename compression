@@ -5,7 +5,6 @@
 folder="records"
 program="7za"
 #
-
 echo "Do You Wish To Decompress (1) Or Compress (2) The Records?"
 read intent
 
@@ -22,12 +21,12 @@ else
 fi
 
     $program e records.zip -o$folder/ -aoa && rm records.zip
-    
+   
 else
     echo "You Selected Compress"
     $program a records.zip $folder/*txt
-    # Options for removing records folder!
-    #sudo rmdir $folder
+    echo "Attempting To Set Permissions For New file To You $USER"
+    sudo chown $USER *.zip
 fi
 echo "Type q To Quit"
 bash menu
