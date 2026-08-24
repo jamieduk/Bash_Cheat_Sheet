@@ -1,4 +1,4 @@
-Linux Cheat Sheet App Creator By (c)J~Net 2021
+Linux Cheat Sheet App Creator By (c)J~Net 2021 Updated (2026)
 
 
 Search file bash code string related to your needs and results can help you write faster code!
