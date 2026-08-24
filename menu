@@ -1,18 +1,280 @@
 #!/bin/bash
-# (c) J~Net 2021
+# J~Net Bash Cheat Sheet - improved interactive TUI
+# (c) J~Net 2021 / updated 2026
 #
-# ./menu
+# ./jnet
 #
-#
-#
-echo -e "\e[93mJ~Net Bash Database Menu (c)J~Net 2021"
-echo ""
-path="." # .
-select fname in $path/*; #
-do
-    echo you picked $fname \($REPLY\)
-    ./$fname
-    bash menu
-    break;
-done
-bash menu
+# Requires: fzf (live search + ranked colourful results)
+#           bat  (optional, colourful record viewer) falls back to cat
+#           less (scrolling viewer)
+
+set -u
+
+RECORDS_DIR="$(cd "$(dirname "$0")" && pwd)/records"
+MENU_SCRIPT="$(cd "$(dirname "$0")" && pwd)/classic-menu" # classic-menu
+
+# ---------------------------------------------------------------------------
+# Colours
+# ---------------------------------------------------------------------------
+C_RESET="\e[0m"
+C_BOLD="\e[1m"
+C_TITLE="\e[1;93m"        # bright yellow
+C_ACCENT="\e[1;96m"       # bright cyan
+C_GREEN="\e[1;92m"
+C_RED="\e[1;91m"
+C_DIM="\e[2m"
+C_GREY="\e[90m"
+
+now() { date '+%F  %H:%M:%S'; }
+
+banner() {
+    printf "${C_TITLE}J~Net Bash Cheat Sheet${C_RESET}  ${C_GREY}(c)J~Net 2021${C_RESET}\n"
+    printf "${C_DIM}$(now)${C_RESET}\n"
+    printf "$1\n\n"
+}
+
+_pager() {
+    # Colourised viewer with scrolling; falls back to plain cat
+    if command -v bat >/dev/null 2>&1; then
+        if command -v less >/dev/null 2>&1; then
+            LESS="-R" bat --pager=less --style=plain --wrap=never "$@"
+        else
+            bat --pager=never --style=plain "$@"
+        fi
+    elif command -v less >/dev/null 2>&1; then
+        less -R "$@"
+    else
+        cat "$@"
+    fi
+}
+
+# View a selected record file, letting it scroll, then offer actions.
+view_record() {
+    local file="$1"
+    printf "\n${C_ACCENT}Record:${C_RESET} ${C_BOLD}${file##*/}${C_RESET}\n"
+    printf "${C_GREY}(scroll with arrows / PgUp / PgDn, q to exit the viewer)${C_RESET}\n\n"
+    _pager "$file"
+    printf "\n"
+}
+
+# Grep a single record with colourised/underlined matches
+grep_in_record() {
+    local file="$1"
+    local term="$2"
+    if [[ -z "$term" ]]; then
+        view_record "$file"
+        return
+    fi
+    printf "\n${C_ACCENT}Matches for '${C_BOLD}$term${C_RESET}${C_ACCENT}' in ${C_BOLD}${file##*/}${C_RESET}:\n\n"
+    if command -v rg >/dev/null 2>&1; then
+        rg -n --color=always --underline "$term" "$file"
+    else
+        grep -n -i --color=always -- "$term" "$file"
+    fi
+    printf "\n"
+}
+
+# ---------------------------------------------------------------------------
+# Action menu shown after a record has been selected
+# ---------------------------------------------------------------------------
+record_actions() {
+    local file="$1"
+    local choice
+    while true; do
+        clear
+        banner "${C_ACCENT}Record selected:${C_RESET} ${C_BOLD}${file##*/}${C_RESET}"
+        printf "${C_GREEN}Choose an action:${C_RESET}\n\n"
+        printf "  ${C_BOLD}1${C_RESET}) View the record\n"
+        printf "  ${C_BOLD}2${C_RESET}) Search within this record\n"
+        printf "  ${C_BOLD}3${C_RESET}) Search all records for another term\n"
+        printf "  ${C_BOLD}4${C_RESET}) Add a new record\n"
+        printf "  ${C_BOLD}5${C_RESET}) Update this record\n"
+        printf "  ${C_BOLD}6${C_RESET}) More info about this record\n"
+        printf "  ${C_BOLD}m${C_RESET}) Main menu\n"
+        printf "  ${C_BOLD}q${C_RESET}) Quit\n\n"
+        printf "${C_GREY}Choice: ${C_RESET}"
+        read -r choice
+        case "$choice" in
+            1)
+                view_record "$file"
+                printf "Press Enter to continue"; read -r _
+                ;;
+            2)
+                printf "Search term: "
+                read -r term
+                grep_in_record "$file" "$term"
+                printf "Press Enter to continue"; read -r _
+                ;;
+            3) return 2 ;;
+            4) add_record_flow ;;
+            5) update_record_flow "$file" ;;
+            6)
+                view_record "$file"
+                printf "${C_GREY}Last modified:${C_RESET} $(stat -c %y "$file")\n"
+                printf "Press Enter to continue"; read -r _
+                ;;
+            m) return 1 ;;
+            q) exit 0 ;;
+            *) printf "${C_RED}Invalid choice${C_RESET}\n"; sleep 1 ;;
+        esac
+    done
+}
+
+# ---------------------------------------------------------------------------
+# Add a new record
+# ---------------------------------------------------------------------------
+add_record_flow() {
+    clear
+    banner "${C_ACCENT}Create New Record${C_RESET}"
+    printf "Enter title (record file name, no extension): "
+    read -r fname
+    [[ -z "$fname" ]] && fname="untitled"
+    local file="$RECORDS_DIR/$fname.txt"
+    if [[ -f "$file" ]]; then
+        printf "${C_RED}Record '$fname' already exists:${C_RESET} ${file##*/}\n"
+        printf "Press Enter to continue"; read -r _
+        return
+    fi
+    local tmp
+    tmp="$(mktemp)"
+    {
+        printf "Logged In AS $USER Created A New Record @ $(date '+%F_%H:%M:%S')\n"
+        printf "\n"
+    } > "$tmp"
+    if command -v nano >/dev/null 2>&1; then
+        nano "$tmp" || { rm -f "$tmp"; return; }
+    else
+        printf "No editor available, entering lines. Empty line ends input:\n"
+        while IFS= read -r line && [[ -n "$line" ]]; do
+            printf "%s\n" "$line" >> "$tmp"
+        done
+    fi
+    printf "\n${C_GREEN}Save this record? (Y/n): ${C_RESET}"
+    read -r yn
+    case "$yn" in
+        [Nn]*) rm -f "$tmp"; printf "Cancelled.\n" ;;
+        *) cat "$tmp" > "$file" ;;
+    esac
+    rm -f "$tmp"
+    printf "Press Enter to continue"; read -r _
+}
+
+# ---------------------------------------------------------------------------
+# Update an existing record
+# ---------------------------------------------------------------------------
+update_record_flow() {
+    local file="$1"
+    clear
+    banner "${C_ACCENT}Update Record${C_RESET} ${C_BOLD}${file##*/}${C_RESET}"
+    view_record "$file"
+    local tmp
+    tmp="$(mktemp)"
+    cp "$file" "$tmp"
+    if command -v nano >/dev/null 2>&1; then
+        nano "$tmp" || { rm -f "$tmp"; return; }
+    fi
+    printf "\n${C_GREEN}Save changes? (Y/n): ${C_RESET}"
+    read -r yn
+    case "$yn" in
+        [Nn]*) rm -f "$tmp"; printf "Cancelled.\n" ;;
+        *) cat "$tmp" > "$file"
+           printf "Agent $USER Updated Record @ $(date '+%F_%H:%M:%S')\n" >> "$file" ;;
+    esac
+    rm -f "$tmp"
+    printf "Press Enter to continue"; read -r _
+}
+
+# ---------------------------------------------------------------------------
+# Search all records with fzf (live matching, ranked, colourful)
+# ---------------------------------------------------------------------------
+search_records_flow() {
+    while true; do
+        clear
+        banner "${C_ACCENT}Search Records${C_RESET}  ${C_GREY}(type to live-match, use arrow keys, Enter to open)${C_RESET}"
+
+        local selected
+        selected="$(cd "$RECORDS_DIR" && fzf \
+            --height 60% \
+            --border \
+            --prompt="Search > " \
+            --color='fg:#c0c0c0,fg+:bold:green,bg+:-1,pointer:cyan,marker:yellow,info:blue,hl:green:underline,hl+:bold:green:underline,query:white,prompt:yellow:bold,spinner:cyan' \
+            --preview-window='right:60%' \
+            --preview 'f=$(find "'"$RECORDS_DIR"'" -maxdepth 1 -type f -name "{}" 2>/dev/null | head -n1); if command -v bat >/dev/null 2>&1; then bat --color=always --style=plain --line-range=:200 "$f" 2>/dev/null; else cat "$f" 2>/dev/null; fi' \
+            --preview-label ' PREVIEW ' \
+            --header-first \
+            --header='Enter = open record   ESC = back' \
+            --bind='enter:accept' \
+        )"
+
+        if [[ -z "$selected" ]]; then
+            printf "${C_DIM}Cancelled.${C_RESET}\n"
+            return
+        fi
+
+        local full="$RECORDS_DIR/$selected"
+        if [[ -f "$full" ]]; then
+            clear
+            local result=0
+            record_actions "$full"
+            result=$?
+            if [[ $result -eq 2 ]]; then continue; fi
+            if [[ $result -eq 1 ]]; then return; fi
+        fi
+    done
+}
+
+# ---------------------------------------------------------------------------
+# Show all records (browse) with live filter
+# ---------------------------------------------------------------------------
+browse_records_flow() {
+    clear
+    banner "${C_ACCENT}Browse All Records${C_RESET}  ${C_GREY}(type to filter, Enter/click to open)${C_RESET}"
+    local selected
+    selected="$(cd "$RECORDS_DIR" && fzf \
+        --height 70% \
+        --border \
+        --prompt="Filter > " \
+        --color='fg:#c0c0c0,fg+:bold:green,bg+:-1,pointer:cyan,marker:yellow,info:blue,hl:green:underline,query:white,prompt:yellow:bold,spinner:cyan' \
+        --preview-window='right:60%' \
+        --preview 'f=$(find "'"$RECORDS_DIR"'" -maxdepth 1 -type f -name "{}" 2>/dev/null | head -n1); if command -v bat >/dev/null 2>&1; then bat --color=always --style=plain --line-range=:200 "$f" 2>/dev/null; else cat "$f" 2>/dev/null; fi' \
+        --preview-label ' PREVIEW ' \
+    )"
+
+    if [[ -n "$selected" ]]; then
+        clear
+        local r=0
+        record_actions "$RECORDS_DIR/$selected"
+        r=$?
+        [[ $r -eq 2 ]] && search_records_flow
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# Main menu
+# ---------------------------------------------------------------------------
+main_menu() {
+    local choice
+    while true; do
+        clear
+        banner "${C_GREY}What would you like to do?${C_RESET}"
+        printf "  ${C_BOLD}1${C_RESET}) Search records (live, ranked)\n"
+        printf "  ${C_BOLD}2${C_RESET}) Browse all records\n"
+        printf "  ${C_BOLD}3${C_RESET}) Add a new record\n"
+        printf "  ${C_BOLD}4${C_RESET}) Back to classic menu\n"
+        printf "  ${C_BOLD}5${C_RESET}) Compression / archive records\n"
+        printf "  ${C_BOLD}q${C_RESET}) Quit\n\n"
+        printf "${C_GREY}Choice: ${C_RESET}"
+        read -r choice
+        case "$choice" in
+            1) search_records_flow ;;
+            2) browse_records_flow ;;
+            3) add_record_flow ;;
+            4) bash "$MENU_SCRIPT"; break ;;
+            5) bash "$(dirname "$0")/compression" ;;
+            q|Q) exit 0 ;;
+            *) printf "${C_RED}Invalid choice${C_RESET}\n"; sleep 1 ;;
+        esac
+    done
+}
+
+main_menu

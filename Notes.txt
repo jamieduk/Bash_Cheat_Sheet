@@ -3,7 +3,6 @@ Linux Cheat Sheet App Creator By (c)J~Net 2021 Updated (2026)
 
 Search file bash code string related to your needs and results can help you write faster code!
 
-
 git clone https://github.com/jamieduk/Bash_Cheat_Sheet.git
 
 cd into it and make executable
@@ -20,9 +19,11 @@ Any issues forum link is
 
 https://jnet.forumotion.com/t1756-bash-cheat-sheet-app#2718
 
+Update:
+Classic menu is still available but now menu has been updated!
 
 The Website Is
-jnet.sytes.net
+jnetai.com
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 More To Come In The Future!
