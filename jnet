@@ -67,7 +67,7 @@ grep_in_record() {
     fi
     printf "\n${C_ACCENT}Matches for '${C_BOLD}$term${C_RESET}${C_ACCENT}' in ${C_BOLD}${file##*/}${C_RESET}:\n\n"
     if command -v rg >/dev/null 2>&1; then
-        rg -n --color=always --underline "$term" "$file"
+        rg -n -i --color=always --underline "$term" "$file"
     else
         grep -n -i --color=always -- "$term" "$file"
     fi
@@ -196,6 +196,7 @@ search_records_flow() {
         selected="$(cd "$RECORDS_DIR" && fzf \
             --height 60% \
             --border \
+            -i \
             --prompt="Search > " \
             --color='fg:#c0c0c0,fg+:bold:green,bg+:-1,pointer:cyan,marker:yellow,info:blue,hl:green:underline,hl+:bold:green:underline,query:white,prompt:yellow:bold,spinner:cyan' \
             --preview-window='right:60%' \
@@ -233,6 +234,7 @@ browse_records_flow() {
     selected="$(cd "$RECORDS_DIR" && fzf \
         --height 70% \
         --border \
+        -i \
         --prompt="Filter > " \
         --color='fg:#c0c0c0,fg+:bold:green,bg+:-1,pointer:cyan,marker:yellow,info:blue,hl:green:underline,query:white,prompt:yellow:bold,spinner:cyan' \
         --preview-window='right:60%' \
