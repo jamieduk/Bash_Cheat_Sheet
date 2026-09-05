@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -uo pipefail
-repo_to_check="https://github.com/jamieduk/AI_Cheat_Sheet" # Change Repo
+repo_to_check="https://github.com/jamieduk/Bash_Cheat_Sheet" # Change Repo
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURRENT_VERSION="${CURRENT_VERSION:-1.0.0}"

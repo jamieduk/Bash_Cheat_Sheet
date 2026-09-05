@@ -2,16 +2,9 @@
 #
 NOW=`date '+%F_%H:%M:%S'`;
 echo "This Will Setup J~Net Bash Database 2021 The Time & Date Is $NOW"
-sudo chmod +x menu
-sudo chmod +x add_record
-sudo chmod +x search_records
-sudo chmod +x menu
-sudo chmod +x more_info
-sudo chmod +x update_record
-sudo chmod +x open_record
-sudo chmod +x show_records
-sudo chmod +x add_missing
-sudo chmod +x compression
+sudo apt install -y fzf p7zip-full bat
+
+chmod +x add_missing add_record compression jnet menu more_info open_record search_records show_records update-check update_record
 # Make folkders if required!
 #[ ! -d "records" ] && sudo mkdir records
 # Check if count file exists!
