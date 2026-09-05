@@ -28,7 +28,7 @@ C_GREY="\e[90m"
 now() { date '+%F  %H:%M:%S'; }
 
 banner() {
-    printf "${C_TITLE}J~Net Bash Cheat Sheet${C_RESET}  ${C_GREY}(c)J~Net 2021${C_RESET}\n"
+    printf "${C_TITLE}J~Net Bash Cheat Sheet${C_RESET}  ${C_GREY}(c)J~Net 2026${C_RESET}\n"
     printf "${C_DIM}$(now)${C_RESET}\n"
     printf "$1\n\n"
 }
@@ -264,6 +264,7 @@ main_menu() {
         printf "  ${C_BOLD}3${C_RESET}) Add a new record\n"
         printf "  ${C_BOLD}4${C_RESET}) Back to classic menu\n"
         printf "  ${C_BOLD}5${C_RESET}) Compression / archive records\n"
+        printf "  ${C_BOLD}6${C_RESET}) Check for updates\n"
         printf "  ${C_BOLD}q${C_RESET}) Quit\n\n"
         printf "${C_GREY}Choice: ${C_RESET}"
         read -r choice
@@ -273,6 +274,7 @@ main_menu() {
             3) add_record_flow ;;
             4) bash "$MENU_SCRIPT"; break ;;
             5) bash "$(dirname "$0")/compression" ;;
+            6) bash "$(dirname "$0")/update-check"; printf "Press Enter to continue"; read -r _ ;;
             q|Q) exit 0 ;;
             *) printf "${C_RED}Invalid choice${C_RESET}\n"; sleep 1 ;;
         esac
